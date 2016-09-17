@@ -13,14 +13,18 @@ def allsongs():
 
 def urlseries(series, season, episode):
     a = 'http://www.heardontv.com/tvshow/'
-    episode = a + series + '/Season+' + season + '/' + episode
-    episode = (episode.replace(" ", "+")).lower()
-    return episode
+    url = a + series + '/Season+' + season + '/' + episode
+    url = (url.replace(" ", "+")).lower()
+    return url
 
-series = raw_input("Series: ")
-season = raw_input("Season: ")
-episode = raw_input("Episode: ")
-url = urlseries(series, season, episode)
+def input():
+    series = raw_input("Series: ")
+    season = raw_input("Season: ")
+    episode = raw_input("Episode: ")
+    url = urlseries(series, season, episode)
+    return url
+
+url = input()
 site = requests.get(url)
 soup = BeautifulSoup(site.text, "lxml")
 # print soup.prettify()
