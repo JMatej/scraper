@@ -1,62 +1,17 @@
+from scraper import getseasons
 from bs4 import BeautifulSoup
-import youtube_dl
 import requests
 
 url = 'http://www.heardontv.com/tvshow/'
 
-def youtubelinks(title):
-    youtubeurl = 'https://www.youtube.com/results?search_query=' + title
-    site = requests.get(youtubeurl)
-    soup = BeautifulSoup(site.text, "lxml")
-    first_video = soup.select('ol.section-list ol.item-section a:nth-of-type(1)')
-    newurl = 'https://www.youtube.com' + first_video[0]['href']
-    print newurl
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-    }
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([newurl])
-
-def allsongs(href):
-    site = requests.get(href)
-    soup = BeautifulSoup(site.text, "lxml")
-    titles = soup.select("div.row-fluid div.song span.song_title")
-    for song in titles:
-        tag = song
-        song_title = tag.string
-        youtubelinks(song_title)
-
-def getseasons(soup):
-    seasons = soup.select("div.seasons a")
-    for season in seasons:
-        getepisodes(season['href'])
-
-def urlseries(series):
+def main():
+    series = raw_input("Series: ")
     link = url + series + '/'
     link = (link.replace(" ", "+")).lower()
-    return link
-
-def getepisodes(href):
-    site = requests.get(href)
-    soup = BeautifulSoup(site.text, "lxml")
-    episodes = soup.select("div.episode_title a")
-    for episode in episodes:
-        allsongs(episode['href'])
-
-def input():
-    series = raw_input("Series: ")
-    link = urlseries(series)
     site = requests.get(link)
     soup = BeautifulSoup(site.text, "lxml")
-    getseasons(soup)
-
-def main():
-    input()
+    path = r'/home/matej/Documents/scraper-matej/' + series + '/'
+    getseasons(soup, path)
 
 if __name__ == '__main__':
     main()
